@@ -6,11 +6,13 @@ class Git2Pdf
   attr_accessor :repos
   attr_accessor :basic_auth
   attr_accessor :api
+  attr_accessor :token
 
   def initialize(options={})
     @repos = options[:repos] || []
     @basic_auth = options[:basic_auth] || nil
     @org = options[:org] || nil
+    @token = options[:token]
     @api = options[:api] || 'https://api.github.com'
     @labels = "&labels=#{options[:labels]}" || ''
     @from_number = options[:from_number] || nil
@@ -35,6 +37,7 @@ class Git2Pdf
   end
 
   def get_issues
+    puts "token :" + @token
     batch = []
 
     #Encode labels - Note a '+' the label needs specific handling
@@ -55,26 +58,29 @@ class Git2Pdf
       print "Loading: "
       while true
         if @org
-          json = open("#{@api}/repos/#{@org}/#{repo}/issues?&per_page=200&state=open#{@labels}", :http_basic_authentication => basic_auth).read
+          json = open("#{@api}/repos/#{@org}/#{repo}/issues?&milestone=#{milestone}&per_page=200&state=open#{@labels}", :http_basic_authentication => basic_auth).read
         else
           # for stuff like bob/stuff
-          json = open("#{@api}/repos/#{repo}/issues?page=#{page}&per_page=200&state=open#{@labels}", :http_basic_authentication => basic_auth).read
+          json = open("#{@api}/repos/#{repo}/issues?&milestone=#{milestone}&page=#{page}&per_page=200&state=open#{@labels}", :http_basic_authentication => basic_auth).read
         end
 
-
-        got = JSON.parse(json)
-        len = got.length
-        count += len
-        
-        if len > 0
-          hash += got
-          page += 1
-          print "#{count} "
-        else
-          puts "issues"
-          break
-        end
+      puts "org = #{@org} repo = #{repo}"
+      if @org
+          if @token
+            json = open("#{@api}/repos/#{@org}/#{repo}/issues?state=open&per_page=100#{@labels}", "Authorization" => ("token " + @token)).read
+          else
+            json = open("#{@api}/repos/#{@org}/#{repo}/issues?state=open&per_page=100#{@labels}", :http_basic_authentication => basic_auth).read
+          end
+      else
+          if @token
+            json = open("#{@api}/repos/#{repo}/issues?state=open&per_page=100#{@labels}", "Authorization" => ("token " + @token)).read
+        # for stuff like bob/stuff
+          else
+            json = open("#{@api}/repos/#{repo}/issues?state=open&per_page=100#{@labels}", :http_basic_authentication => basic_auth).read
+          end
       end
+
+      hash = JSON.parse(json)
 
       hash.each do |val|
         if @from_number
@@ -175,28 +181,23 @@ class Git2Pdf
           #text_box fields["due"] || "", :at=>[120,20], :width=>60, :overflow=>:shrink_to_fit
           y_offset = y_offset + 20
         end
-        
+
         fill_color "EEEEEE"
-        fill_color "D0021B" if issue[:type] == "BUG"            
-        fill_color "1D8FCE" if issue[:type] == "TASK"            
+        fill_color "D0021B" if issue[:type] == "BUG"
+        fill_color "1D8FCE" if issue[:type] == "TASK"
         fill_color "FBF937" if issue[:type] == "FEATURE"
         fill_color "F5B383" if issue[:type] == "AMEND"
         fill_color "FBF937" if issue[:type] == "ENHANCEMENT"
         fill_color "33CC33" if issue[:type] == "PULL"
 
         if issue[:type] and issue[:type] != ""
-          fill{rectangle([0,220], margin-10, 220)}          
+          fill{rectangle([0,220], margin-10, 220)}
         else
-          fill{rectangle([0,220], margin-10, 220)}          
+          fill{rectangle([0,220], margin-10, 220)}
         end
-        
-        if issue[:type] == "PULL"
-          fill_color "FFFFFF"
-          draw_text "Pull Request", :rotate => "90", :size => 10, :at => [8,75]
-        end
-        
+
         fill_color(0,0,0,100)
-        
+
         # if issue[:type] and issue[:type] != ""
 #           y_offset = y_offset - 20
 #           # Type
@@ -217,7 +218,7 @@ class Git2Pdf
         #text_box fields[:due] || "", :at=>[120,20], :width=>60, :overflow=>:shrink_to_fit
         #end
 
-        
+
 
         #if col == 1
         #  row = row + 1

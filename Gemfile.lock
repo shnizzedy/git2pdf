@@ -88,6 +88,7 @@ DEPENDENCIES
   bundler (~> 1.0)
   jeweler (~> 2.0.1)
   prawn
+  rake (~> 13.0)
   rdoc (~> 3.12)
   shoulda
   simplecov
