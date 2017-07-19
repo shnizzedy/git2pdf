@@ -6,9 +6,11 @@ class Git2Pdf
   attr_accessor :repos
   attr_accessor :basic_auth
   attr_accessor :api
+  attr_accessor :milestone
 
   def initialize(options={})
     @repos = options[:repos] || []
+    @milestone = options[:milestone] || ''
     @basic_auth = options[:basic_auth] || nil
     @org = options[:org] || nil
     @api = options[:api] || 'https://api.github.com'
@@ -55,10 +57,10 @@ class Git2Pdf
       print "Loading: "
       while true
         if @org
-          json = open("#{@api}/repos/#{@org}/#{repo}/issues?&per_page=200&state=open#{@labels}", :http_basic_authentication => basic_auth).read
+          json = open("#{@api}/repos/#{@org}/#{repo}/issues?&milestones=#{milestone}&per_page=200&state=open#{@labels}", :http_basic_authentication => basic_auth).read
         else
           # for stuff like bob/stuff
-          json = open("#{@api}/repos/#{repo}/issues?page=#{page}&per_page=200&state=open#{@labels}", :http_basic_authentication => basic_auth).read
+          json = open("#{@api}/repos/#{repo}/issues?&milestones=#{milestone}&page=#{page}&per_page=200&state=open#{@labels}", :http_basic_authentication => basic_auth).read
         end
 
 
