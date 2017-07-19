@@ -57,10 +57,10 @@ class Git2Pdf
       print "Loading: "
       while true
         if @org
-          json = open("#{@api}/repos/#{@org}/#{repo}/issues?&milestones=#{milestone}&per_page=200&state=open#{@labels}", :http_basic_authentication => basic_auth).read
+          json = open("#{@api}/repos/#{@org}/#{repo}/issues?&milestone=#{milestone}&per_page=200&state=open#{@labels}", :http_basic_authentication => basic_auth).read
         else
           # for stuff like bob/stuff
-          json = open("#{@api}/repos/#{repo}/issues?&milestones=#{milestone}&page=#{page}&per_page=200&state=open#{@labels}", :http_basic_authentication => basic_auth).read
+          json = open("#{@api}/repos/#{repo}/issues?&milestone=#{milestone}&page=#{page}&per_page=200&state=open#{@labels}", :http_basic_authentication => basic_auth).read
         end
 
 
