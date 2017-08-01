@@ -90,7 +90,7 @@ class Git2Pdf
         type = "FEATURE" if labels =~ /feature/i #billable
         type = "ENHANCEMENT" if labels =~ /enhancement/i #billable
         type = "AMEND" if labels =~ /amend/i #not billable
-        type = "TASK" if labels =~ /user-story/i #not billable
+        type = "TASK" if labels =~ /story/i #not billable
         type = "PULL" if val["pull_request"]
         
         if type == "PULL" and @pulls == 'N'
@@ -180,7 +180,7 @@ class Git2Pdf
         
         fill_color "EEEEEE"
         fill_color "D0021B" if issue[:type] == "BUG"            
-        fill_color "1D8FCE" if issue[:type] == "TASK"            
+        fill_color "1D8FCE" if issue[:type] == "USER-STORY"            
         fill_color "FBF937" if issue[:type] == "FEATURE"
         fill_color "F5B383" if issue[:type] == "AMEND"
         fill_color "FBF937" if issue[:type] == "ENHANCEMENT"
