@@ -90,7 +90,7 @@ class Git2Pdf
         type = "FEATURE" if labels =~ /feature/i #billable
         type = "ENHANCEMENT" if labels =~ /enhancement/i #billable
         type = "AMEND" if labels =~ /amend/i #not billable
-        type = "TASK" if labels =~ /story/i #not billable
+        type = "TASK" if labels =~ /user\-story/i #not billable
         type = "PULL" if val["pull_request"]
         
         if type == "PULL" and @pulls == 'N'
