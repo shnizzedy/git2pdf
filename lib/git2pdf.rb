@@ -180,7 +180,7 @@ class Git2Pdf
         
         fill_color "EEEEEE"
         fill_color "D0021B" if issue[:type] == "BUG"            
-        fill_color "1D8FCE" if issue[:type] == "USER-STORY"            
+        fill_color "1D8FCE" if issue[:type] == "TASK"            
         fill_color "FBF937" if issue[:type] == "FEATURE"
         fill_color "F5B383" if issue[:type] == "AMEND"
         fill_color "FBF937" if issue[:type] == "ENHANCEMENT"
